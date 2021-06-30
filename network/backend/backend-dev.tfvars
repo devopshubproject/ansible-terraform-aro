@@ -1,5 +1,5 @@
 resource_group_name  = "dev-tf-rg"
-storage_account_name = "devtfstate"
+storage_account_name = "devtfstatebucket"
 container_name       = "devnetworkstate"
 key                  = "terraform.ntw.dev.tfstate"
-access_key           = ""
+#access_key           = ""
