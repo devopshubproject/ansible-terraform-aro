@@ -1,12 +1,18 @@
 ---
 name: "Network Deploy"
 
+# on:
+#   workflow_dispatch:
+#     inputs:
+#       env_name:
+#         description: "Terraform Network Layer deployment for ARO Project !!!"
+#         required: true
 on:
-  workflow_dispatch:
-    inputs:
-      env_name:
-        description: "Terraform Network Layer deployment for ARO Project !!!"
-        required: true
+  # Trigger the workflow on push or pull request,
+  # but only for the main branch
+  push:
+    branches:
+      - main
 
 jobs:
   terraform-apply:
