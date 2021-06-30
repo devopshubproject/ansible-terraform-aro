@@ -1,0 +1,44 @@
+---
+name: "Network Deploy"
+
+on:
+  workflow_dispatch:
+    inputs:
+      env_name:
+        description: "Terraform Network Layer deployment for ARO Project !!!"
+        required: true
+
+jobs:
+  terraform-apply:
+    name: "Terraform apply"
+    runs-on: ubuntu-20.04
+    env:
+      ARM_CLIENT_ID: ${{secrets.TF_HUB_ARM_CLIENT_ID}}
+      ARM_CLIENT_SECRET: ${{secrets.TF_HUB_ARM_CLIENT_SECRET}}
+      ARM_SUBSCRIPTION_ID: ${{secrets.TF_ARM_SUBSCRIPTION_ID}}
+      ARM_TENANT_ID: ${{secrets.TF_ARM_TENANT_ID}}
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+
+      - name: Terraform Format
+        id: fmt
+        run: cd network/ ; terraform fmt -check
+
+
+      - name: Terraform Init
+        run: cd network/ ; terraform init -backend-config=backend/backend-$BRANCH_NAME.tfvars
+
+      - name: Terraform Validate
+        id: validate
+        run: cd network/ ; terraform validate -no-color
+
+      - name: Terraform Plan
+        run: cd network/ ; terraform plan  -input=false -lock=false -var-file=tfvars/$BRANCH_NAME.tfvars 
+
+      - name: Terraform Apply
+        run: cd network/ ; terraform apply -auto-approve -var-file=tfvars/$BRANCH_NAME.tfvars
