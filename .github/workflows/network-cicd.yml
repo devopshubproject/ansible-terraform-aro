@@ -25,10 +25,9 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
 
-      - name: Terraform Format
-        id: fmt
-        run: cd network/ ; terraform fmt -check
-
+      # - name: Terraform Format
+      #   id: fmt
+      #   run: cd network/ ; terraform fmt -check
 
       - name: Terraform Init
         run: cd network/ ; terraform init -backend-config=backend/backend-$BRANCH_NAME.tfvars
@@ -40,5 +39,5 @@ jobs:
       - name: Terraform Plan
         run: cd network/ ; terraform plan  -input=false -lock=false -var-file=tfvars/$BRANCH_NAME.tfvars 
 
-      - name: Terraform Apply
-        run: cd network/ ; terraform apply -auto-approve -var-file=tfvars/$BRANCH_NAME.tfvars
+      # - name: Terraform Apply
+      #   run: cd network/ ; terraform apply -auto-approve -var-file=tfvars/$BRANCH_NAME.tfvars
