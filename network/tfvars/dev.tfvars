@@ -10,7 +10,7 @@ vnet_address_space = ["10.0.0.0/22", "10.224.52.0/23"]
 
 subnet_address_spaces = {
   "dev-controlplane-snet" = {
-    "name"                                           = "dev-northeurope-sas-data-snet",
+    "name"                                           = "dev-northeurope-aro-master-snet",
     "cidr"                                           = ["10.0.0.0/23"]
     "enforce_private_link_service_network_policies"  = false
     "enforce_private_link_endpoint_network_policies" = false
@@ -24,7 +24,7 @@ subnet_address_spaces = {
   },
 
   "dev-worker-snet" = {
-    "name"                                           = "dev-northeurope-sas-databricksprivate-snet",
+    "name"                                           = "dev-northeurope-aro-worker-snet",
     "cidr"                                           = ["10.0.2.0/23"]
     "enforce_private_link_service_network_policies"  = false
     "enforce_private_link_endpoint_network_policies" = false
