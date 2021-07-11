@@ -1,0 +1,124 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "location": {
+        "type": "string",
+        "metadata": {
+          "description": "The geo-location where the resource lives"
+        }
+      },
+      "cluster_name": {
+        "type": "string",
+        "metadata": {
+          "description": "The name of the OpenShift cluster resource"
+        }
+      },
+      "cluster_rgname": {
+        "type": "string",
+        "metadata": {
+          "description": "The ID of the cluster resource group (immutable)"
+        }
+      },
+      "domain_name": {
+        "type": "string",
+        "metadata": {
+          "description": "The domain for the cluster (immutable)"
+        }
+      },
+      "tags": {
+        "type": "string",
+        "defaultValue": {
+          "owner"   : "Prem",
+          "service" : "openshift",
+          "env"     : ""
+        },
+        "metadata": {
+          "description": "Resource tags"
+        }
+      },
+      "worker_Subnetid": {
+        "type": "string",
+        "metadata": {
+          "description": "The Azure resource ID of the worker subnet (immutable)"
+        }
+      },
+      "master_subnetid": {
+        "type": "string",
+        "metadata": {
+          "description": "The Azure resource ID of the master subnet (immutable)"
+        }
+      },
+      "client_id": {
+        "type": "string",
+        "metadata": {
+          "description": "The client ID used for the cluster (immutable)"
+        }
+      },
+      "client_secret": {
+        "type": "securestring",
+        "metadata": {
+          "description": "The client secret used for the cluster (immutable)"
+        }
+      },
+      "pull_secret": {
+        "type": "securestring",
+        "metadata": {
+          "description": "The pull secret for the cluster (immutable)"
+        }
+      }
+    },
+    "variables": {
+      "tagsObject": "[base64(parameters('tags'))]"
+    },
+    "resources": [
+      {
+        "type": "Microsoft.RedHatOpenShift/OpenShiftClusters",
+        "apiVersion": "2020-04-30",
+        "name": "[parameters('cluster_name')]",
+        ##"tags": "[base64ToJson(variables('tagsObject'))]",
+        "location": "[parameters('location')]",
+        "properties": {
+          "consoleProfile": {
+            "url": "[parameters('consoleProfile_url')]"##
+          },
+          "clusterProfile": {
+            "pullSecret": "[parameters('pull_secret')]",
+            "domain": "[parameters('domain_name')]",
+            ##"resourceGroupId": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', parameters('clusterResourceGroupName'))]"
+          },
+          "servicePrincipalProfile": {
+            "clientId": "[parameters('client_id')]",
+            "clientSecret": "[parameters('client_secret')]"
+          },
+          "networkProfile": {
+            "podCidr": "10.128.0.0/14",
+            "serviceCidr": "172.30.0.0/16"
+          },
+          "apiserverProfile": {
+            "visibility": "Public"
+          },
+          "ingressProfiles": [
+            {
+              "name": "default",
+              "visibility": "Public"
+            }
+          ],
+          "masterProfile": {
+            "vmSize": "Standard_D8s_v3"##,
+            "subnetId": "[parameters('master_subnetid')]"
+            
+          },
+          "workerProfiles": [
+            {
+              "name": "worker",
+              "subnetId": "[parameters('worker_subnetid')]",
+              "vmSize": "Standard_D4s_v3",
+              "diskSizeGB": 128,
+              "count": 3
+            }
+          ]
+        }
+      }
+    ]
+  }
